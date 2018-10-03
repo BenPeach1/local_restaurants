@@ -146,6 +146,39 @@ def deleteMenuItem(restaurant_id, menu_id):
         return render_template('deletemenuitem.html', restaurant_id=restaurant_id, menu_id=menu_id, item=deletedItem)
 
 
+# JSON API Endpoints Below******************************************************
+# Show All Restaurants - JSON
+@app.route('/restaurants/JSON')
+def showRestaurantsJSON():
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    restaurants = session.query(Restaurant).all()
+    return jsonify(Restaurants=[r.serialize for r in restaurants])
+
+
+# Show Restaurant Menu - JSON
+@app.route('/restaurant/<int:restaurant_id>/menu/JSON')
+def showRestaurantMenuJSON(restaurant_id):
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    restaurant = session.query(
+        Restaurant).filter_by(id=restaurant_id).one()
+    items = session.query(MenuItem).filter_by(
+        restaurant_id=restaurant.id)
+    return jsonify(MenuItems=[i.serialize for i in items])
+
+# Show Menu Item - JSON
+
+
+@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/JSON')
+def showMenuItemJSON(restaurant_id, menu_id):
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    item = session.query(MenuItem).filter_by(id=menu_id).one()
+    return jsonify(MenuItem=item.serialize)
+
+
+# ******************************************************************************
 if __name__ == '__main__':
     # app.secret_key = ''
     app.debug = True
