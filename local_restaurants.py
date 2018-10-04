@@ -32,7 +32,7 @@ def newRestaurant():
             name=request.form['name'])
         session.add(newRestaurant)
         session.commit()
-        #flash("New menu item created!")
+        flash("New Restaurant Created!")
         return redirect(url_for('showRestaurants'))
     else:
         return render_template('newrestaurant.html')
@@ -51,7 +51,7 @@ def editRestaurant(restaurant_id):
             editedRestaurant.name = request.form['name']
         session.add(editedRestaurant)
         session.commit()
-        #flash("Item edited!")
+        flash("Restaurant Successfully Edited!")
         return redirect(url_for('showRestaurants'))
     else:
         return render_template('editrestaurant.html', restaurant_id=restaurant_id, restaurant=editedRestaurant)
@@ -68,7 +68,7 @@ def deleteRestaurant(restaurant_id):
     if request.method == 'POST':
         session.delete(deletedRestaurant)
         session.commit()
-        #flash("Item deleted!")
+        flash("Restaurant Successfully Deleted!")
         return redirect(url_for('showRestaurants'))
     else:
         return render_template('deleteRestaurant.html', restaurant=deletedRestaurant)
@@ -94,17 +94,13 @@ def newMenuItem(restaurant_id):
     # return "This page allows the user to add a new menu item"
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
-    # restaurant = session.query(
-    #     Restaurant).filter_by(id=restaurant_id).one()
-    # items = session.query(MenuItem).filter_by(
-    #     restaurant_id=restaurant.id)
     if request.method == 'POST':
         newItem = MenuItem(
             name=request.form['name'], description=request.form['description'],
             price=request.form['price'], restaurant_id=restaurant_id)
         session.add(newItem)
         session.commit()
-        #flash("New menu item created!")
+        flash("Menu Item Created!")
         return redirect(url_for('showMenu', restaurant_id=restaurant_id))
     else:
         return render_template('newmenuitem.html', restaurant_id=restaurant_id)
@@ -124,7 +120,7 @@ def editMenuItem(restaurant_id, menu_id):
             editedItem.price = request.form['price']
         session.add(editedItem)
         session.commit()
-        #flash("Item edited!")
+        flash("Menu Item Successfully Edited!")
         return redirect(url_for('showMenu', restaurant_id=restaurant_id))
     else:
         return render_template('editmenuitem.html', restaurant_id=restaurant_id, menu_id=menu_id, item=editedItem)
@@ -140,7 +136,7 @@ def deleteMenuItem(restaurant_id, menu_id):
     if request.method == 'POST':
         session.delete(deletedItem)
         session.commit()
-        #flash("Item deleted!")
+        flash("Menu Item Successfully Deleted!")
         return redirect(url_for('showMenu', restaurant_id=restaurant_id))
     else:
         return render_template('deletemenuitem.html', restaurant_id=restaurant_id, menu_id=menu_id, item=deletedItem)
@@ -167,9 +163,8 @@ def showRestaurantMenuJSON(restaurant_id):
         restaurant_id=restaurant.id)
     return jsonify(MenuItems=[i.serialize for i in items])
 
+
 # Show Menu Item - JSON
-
-
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/JSON')
 def showMenuItemJSON(restaurant_id, menu_id):
     DBSession = sessionmaker(bind=engine)
@@ -180,6 +175,6 @@ def showMenuItemJSON(restaurant_id, menu_id):
 
 # ******************************************************************************
 if __name__ == '__main__':
-    # app.secret_key = ''
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
